@@ -33,17 +33,17 @@ class ReplayBuffer(object):
         for i in idxes:
             data = self._storage[i]
             obs_t, action, reward, obs_tp1, done = data
-            obses_t.append(np.array(obs_t, copy=False))
-            actions.append(np.array(action, copy=False))
+            obses_t.append(np.asarray(obs_t))
+            actions.append(np.asarray(action))
             rewards.append(reward)
-            obses_tp1.append(np.array(obs_tp1, copy=False))
+            obses_tp1.append(np.asarray(obs_tp1))
             dones.append(done)
         return (
             np.array(obses_t),
             np.array(actions),
             np.array(rewards),
             np.array(obses_tp1),
-            np.array(dones)
+            np.array(dones),
         )
 
     def sample(self, batch_size):
@@ -66,9 +66,5 @@ class ReplayBuffer(object):
             done_mask[i] = 1 если выполнение act_batch[i] привело к
             концу эпизода и 0 в противоположном случае.
         """
-        idxes = [
-            random.randint(0, len(self._storage) - 1)
-            for _ in range(batch_size)
-        ]
+        idxes = [random.randint(0, len(self._storage) - 1) for _ in range(batch_size)]
         return self._encode_sample(idxes)
-
